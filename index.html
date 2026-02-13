@@ -2,53 +2,59 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Veux-tu être ma Valentine ?</title>
     <style>
+        * {
+            box-sizing: border-box;
+            touch-action: manipulation;
+        }
+
         body {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
             background-color: #ffebee;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden; /* Empêche le scroll quand le bouton bouge */
             text-align: center;
+            padding: 20px;
         }
 
         h1 {
             color: #d32f2f;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
         }
 
         .gif-container img {
-            width: 230px;
+            max-width: 80%;
+            height: auto;
             border-radius: 15px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
-        /* Conteneur des boutons avec plus d'espace */
         .buttons-container {
             display: flex;
-            justify-content: center;
+            flex-direction: column; /* Stack vertical sur mobile */
             align-items: center;
-            gap: 100px; /* Augmentation de l'espace ici (100px) */
+            gap: 20px;
             width: 100%;
-            height: 80px;
+            height: 200px;
             position: relative;
         }
 
         button {
-            padding: 15px 35px;
-            font-size: 1.3rem;
+            padding: 15px 40px;
+            font-size: 1.2rem;
             font-weight: bold;
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            transition: transform 0.2s, background-color 0.3s;
+            width: 200px; /* Taille fixe pour plus de stabilité */
         }
 
         #btnOui {
@@ -56,26 +62,24 @@
             color: white;
             box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
             z-index: 10;
+            transition: transform 0.2s;
         }
 
         #btnNon {
             background-color: #f44336;
             color: white;
-            transition: all 0.2s ease;
-            z-index: 10;
+            z-index: 5;
+            /* Transition rapide pour l'effet de fuite */
+            transition: all 0.15s ease-out; 
         }
 
         .success-msg {
             display: none;
-            animation: fadeIn 1s;
+            padding: 20px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        #success h1 { color: #c2185b; font-size: 2.5rem; }
+        #success h1 { color: #c2185b; font-size: 2rem; }
+        #success img { max-width: 90%; border-radius: 15px; }
     </style>
 </head>
 <body>
@@ -88,13 +92,13 @@
         
         <div class="buttons-container">
             <button id="btnOui" onclick="celebrate()">OUI !</button>
-            <button id="btnNon" onmouseover="moveButton()">NON</button>
+            <button id="btnNon" onmouseover="moveButton()" ontouchstart="moveButton()">NON</button>
         </div>
     </div>
 
     <div id="success" class="success-msg">
-        <h1>YEAAAH ! Rendez-vous le 14 ! 😍🌹</h1>
-        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHp4Z3R4Z3R4Z3R4Z3R4Z3R4Z3R4Z3R4Z3R4Z3R4Z3R4Z3R4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/l41lH4ADRtAYnGsLe/giphy.gif" width="300">
+        <h1>YEAAAH ! <br>Rendez-vous le 14 ! 😍🌹</h1>
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHp4Z3R4Z3R4Z3R4Z3R4Z3R4Z3R4Z3R4Z3R4Z3R4Z3R4Z3R4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/l41lH4ADRtAYnGsLe/giphy.gif">
     </div>
 
     <script>
@@ -104,16 +108,20 @@
             const btn = document.getElementById('btnNon');
             const btnOui = document.getElementById('btnOui');
             
-            // On téléporte le bouton n'importe où sur l'écran
-            const x = Math.random() * (window.innerWidth - btn.offsetWidth);
-            const y = Math.random() * (window.innerHeight - btn.offsetHeight);
+            // Calculer des positions qui restent dans la zone visible du téléphone
+            // On laisse une marge de 100px pour éviter que le bouton disparaisse à moitié
+            const maxX = window.innerWidth - btn.offsetWidth - 20;
+            const maxY = window.innerHeight - btn.offsetHeight - 20;
+            
+            const x = Math.max(10, Math.random() * maxX);
+            const y = Math.max(10, Math.random() * maxY);
             
             btn.style.position = 'fixed';
             btn.style.left = x + 'px';
             btn.style.top = y + 'px';
 
-            // Bonus : Le bouton OUI grossit à chaque fois qu'elle essaie de cliquer sur NON
-            ouiScale += 0.1;
+            // Le bouton OUI grossit
+            ouiScale += 0.15;
             btnOui.style.transform = `scale(${ouiScale})`;
         }
 
